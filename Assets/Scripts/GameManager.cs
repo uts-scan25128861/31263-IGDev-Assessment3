@@ -44,7 +44,37 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
+        SetScore(0);
+        SetLives(3);
+        NewRound();
         StartCoroutine(PlayEntryThenLoop());
+    }
+
+    private void NewRound()
+    {
+        foreach (Transform p in pellets)
+        {
+            pellets.gameObject.SetActive(true);
+        }
+        ResetState();
+    }
+
+    private void ResetState()
+    {
+        for (int i = 0; i < enemies.Length; i++)
+        {
+            enemies[i].ResetState();
+        }
+        player.ResetState();
+    }
+
+    private void GameOver()
+    {
+        for (int i = 0; i < enemies.Length; i++)
+        {
+            enemies[i].gameObject.SetActive(false);
+        }
+        player.gameObject.SetActive(false);
     }
 
     IEnumerator PlayEntryThenLoop()
@@ -62,6 +92,52 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         AudioManager.Instance.Play("Background");
+        
+    }
+
+    private void SetScore(int score)
+    {
+        this.score = score;
+    }
+
+    private void SetLives(int lives)
+    {
+        this.lives = lives;
+    }
+
+    public void PlayerHit()
+    {
+        this.player.gameObject.SetActive(false);
+        SetLives(lives - 1);
+        if (lives < 0)
+        {
+            Invoke(nameof(ResetState), 3.0f);
+        }
+        else
+        {
+            GameOver();
+        }
+    }
+
+    public void PelletEaten(Pellet pellet)
+    {
+        pellet.gameObject.SetActive(false);
+        
+    }
+
+    public void PowerUpEaten(PowerUp power)
+    {
+        for (int i = 0; i < enemies.Length; i++)
+        {
+            enemies[i].scared.Enable(10f);
+        }
+
+        PelletEaten(power);
+
+    }
+
+    public void EnemyEaten(Enemy enemy)
+    {
         
     }
 }

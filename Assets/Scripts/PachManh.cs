@@ -7,7 +7,10 @@ public class PachManh : MonoBehaviour
     private AnimatedSprite death;
     private SpriteRenderer spriteRenderer;
     private BoxCollider2D boxCollider;
+
+    private Vector2 position;
     private Movement movement;
+    private float speed = 5f;
 
     private void Awake()
     {
@@ -24,22 +27,31 @@ public class PachManh : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        float xDir = 0f;
+        float yDir = 0f;
+
         if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            movement.SetDirection(Vector2.up);
-        }
-        if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.LeftDown))
-        {
-            movement.SetDirection(Vector2.left);
+            xDir = -1f;
         }
         if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
         {
-            movement.SetDirection(Vector2.right);
+            xDir = 1f;
+        }
+
+        // Check for Vertical movement (W/S or Up/Down arrows)
+        if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            yDir = -1f;
         }
         if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
         {
-            movement.SetDirection(Vector2.up);
+            yDir = 1f;
         }
+
+        Vector3 moveDir = new Vector3(xDir, yDir, 0);
+
+        transform.position += moveDir * speed * Time.deltaTime;
     }
 
     public void ResetState()
